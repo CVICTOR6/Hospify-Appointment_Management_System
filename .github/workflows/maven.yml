@@ -20,9 +20,9 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_PASSWORD: hospify_appointment_system
+          POSTGRES_PASSWORD: 123
           POSTGRES_USER: postgres
-          POSTGRES_DB: 123
+          POSTGRES_DB: hospify_appointment_system
         ports:
         - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
@@ -45,8 +45,3 @@ jobs:
       run: |
         psql --host=localhost --port=5432 --username=$POSTGRES_USER --password=$POSTGRES_PASSWORD --dbname=$POSTGRES_DB --command="CREATE DATABASE hospify_appointment_system;"
         
-    - name: Set application properties
-      run: |
-        echo "spring.datasource.url=jdbc:postgresql://localhost:5432/hospify" >> src/main/resources/application.properties
-        echo "spring.datasource.username=$POSTGRES_USER" >> src/main/resources/application.properties
-        echo "spring.datasource.password=$POSTGRES_PASSWORD" >> src/main/resources/application.properties
