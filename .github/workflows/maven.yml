@@ -43,7 +43,7 @@ jobs:
         
     - name: Setup PostgreSQL database
       run: |
-        psql --host=localhost --port=5432 --username=$POSTGRES_USER --dbname=$POSTGRES_DB --command="CREATE DATABASE hospify;"
+        psql --host=localhost --port=5432 --username=$POSTGRES_USER --password=$POSTGRES_PASSWORD --dbname=$POSTGRES_DB --command="CREATE DATABASE hospify_appointment_system;"
         
     - name: Set application properties
       run: |
