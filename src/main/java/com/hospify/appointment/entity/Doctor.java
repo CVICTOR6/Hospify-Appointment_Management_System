@@ -34,6 +34,7 @@ public class Doctor extends BaseEntity{
     @OneToOne(mappedBy = "doctor", cascade = CascadeType.ALL)
     private ContactInformation contactInformation;
 
-    @ManyToMany (mappedBy = "doctor")
-    private Set<Appointment> appointment = new HashSet<>();
+    @ManyToMany(mappedBy = "doctors")
+    private Set<Appointment> appointments = new HashSet<>();
 }
+

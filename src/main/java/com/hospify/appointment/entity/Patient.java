@@ -41,6 +41,6 @@ public class Patient extends BaseEntity{
     @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL)
     private InsuranceInformation insuranceInformation;
 
-    @ManyToMany(mappedBy = "patient")
+    @ManyToMany(mappedBy = "patients")
     private Set<Appointment> appointment = new HashSet<>();
 }
