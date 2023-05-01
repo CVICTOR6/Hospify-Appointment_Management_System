@@ -1,7 +1,7 @@
 # This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
 
-name: Java CI with Maven
+name: Java CI with Maven and Postgres
 
 on:
   push:
@@ -17,14 +17,20 @@ jobs:
         java-version: [17]
 
     env:
-      DB_HOST: localhost
-      DB_PORT: 5432
       DB_DATABASE: hospify_appointment_system
       DB_USER: postgres
-      DB_PASSWORD: password
+      DB_PASSWORD: 123
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
+      
+      - name: Set up locale
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y locales
+          sudo locale-gen en_US.UTF-8
+          sudo update-locale LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8
+
       - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v3
         with:
@@ -32,27 +38,14 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      - name: Set up PostgreSQL
-        uses: docker://postgres:13-alpine
-        env:
-          POSTGRES_USER: ${{ env.DB_USER }}
-          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
-          POSTGRES_DB: ${{ env.DB_DATABASE }}
-        with:
-          args: >
-            -p ${{ env.DB_PORT }}:5432
-            -e POSTGRES_USER
-            -e POSTGRES_PASSWORD
-            -e POSTGRES_DB
-            --name postgres
-            --health-cmd pg_isready
-            --health-interval 10s
-            --health-timeout 5s
-            --health-retries 3
-            -d postgres:13-alpine
-
-      - name: Wait for PostgreSQL to start
-        run: docker exec postgres sh -c 'while ! pg_isready -U ${{ env.DB_USER }} -d ${{ env.DB_DATABASE }} -h localhost -p ${{ env.DB_PORT }}; do sleep 1; done;'
+      - name: Set up Postgres
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql
+          sudo service postgresql start
+          sudo -u postgres psql -c "CREATE DATABASE ${{ env.DB_DATABASE }};"
+          sudo -u postgres psql -c "CREATE USER ${{ env.DB_USER }} WITH PASSWORD '${{ env.DB_PASSWORD }}';"
+          sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ env.DB_DATABASE }} TO ${{ env.DB_USER }};"
 
       - name: Build
         run: mvn --batch-mode -DskipTests package
