@@ -43,5 +43,6 @@ jobs:
         
     - name: Setup PostgreSQL database
       run: |
-        psql --host=localhost --port=5432 --username=$POSTGRES_USER --PGPASSWORD=$POSTGRES_PASSWORD --dbname=$POSTGRES_DB --command="CREATE DATABASE hospify_appointment_system;"
+        psql --host=localhost --port=5432 --username=$POSTGRES_USER --dbname=$POSTGRES_DB --set=PGPASSWORD=$POSTGRES_PASSWORD --command="CREATE DATABASE hospify_appointment_system;"
+
         
