@@ -5,9 +5,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main", "develop"  ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ "main" , "develop" ]
 
 jobs:
   build:
@@ -16,25 +16,35 @@ jobs:
       id-token: write
       contents: read
       checks: write
+    strategy:
+      matrix:
+        java-version: [17]
+
+#    env:
+#      DB_DATABASE: hivedb
+#      DB_USER: root
+#      DB_PASSWORD: root
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK 17 for  x64
-        uses: actions/setup-java@v2
+      - uses: actions/checkout@v3
+      - name: Set up JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: ${{ matrix.java-version }}
           distribution: 'adopt'
-          architecture: x64
-      - name: Cache local Maven repository
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-      - name: Build with Maven
+          cache: maven
+          
+          
+      - name: Set up Postgres
         run: |
-          mvn -B package --file pom.xml -Dspring.profiles.active=test
+          sudo apt-get update
+          sudo apt-get install postgresql postgresql-contrib
+          sudo systemctl start postgresql
+          sudo -u postgres psql -c "CREATE DATABASE hospify_appointment_system;"
+          sudo -u postgres psql -c "CREATE USER your_username WITH ENCRYPTED PASSWORD '123';"
+          sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE hospify_appointment_system TO postgres;"
+
+
       - name: Build
         run: mvn --batch-mode -DskipTests package
 
