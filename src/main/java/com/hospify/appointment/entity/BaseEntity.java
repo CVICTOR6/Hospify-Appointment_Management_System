@@ -1,5 +1,6 @@
 package com.hospify.appointment.entity;
 
+import com.fasterxml.jackson.core.SerializableString;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
