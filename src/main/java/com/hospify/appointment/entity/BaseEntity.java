@@ -1,6 +1,5 @@
 package com.hospify.appointment.entity;
 
-import com.fasterxml.jackson.core.SerializableString;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -8,10 +7,11 @@ import org.hibernate.Hibernate;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.io.Serial;
 import java.io.Serializable;
+import java.io.Serial;
 import java.sql.Timestamp;
 import java.util.Objects;
+
 
 @MappedSuperclass
 @Getter
